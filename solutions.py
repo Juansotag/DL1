@@ -1,66 +1,56 @@
 import torch
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
-import imageio.v2 as imageio
-import os
 
 def optimize_torch_fun1(f):
-
-    tensor = torch.rand(2, requires_grad=True) 
-    learning_rate, num_iterations = 0.035, 67   
-    optimizer = torch.optim.Adam([tensor], lr=learning_rate) 
-    loss_values = []  
-
-    for _ in range(num_iterations):
-        optimizer.zero_grad()          
-        current_loss = f(tensor)       
-        current_loss.backward()       
-        optimizer.step()               
-        loss_values.append(current_loss.item())  
-    return tensor
+    """
+    Fast optimization of a PyTorch function with 2D input.
+    """
+    x = torch.rand(2, requires_grad=True)
+    opt = torch.optim.Adam([x], lr=0.035)
+    for _ in range(67):
+        opt.zero_grad()
+        loss = f(x)
+        loss.backward()
+        opt.step()
+    return x
 
 def optimize_torch_fun2(f):
-
-    tensor = torch.rand(10, requires_grad=True)  
-    learning_rate, num_iterations = 0.031, 75
-    optimizer = torch.optim.Adam([tensor], lr=learning_rate)
-    loss_values = []
-
-    for _ in range(num_iterations):
-        optimizer.zero_grad()
-        current_loss = f(tensor)
-        current_loss.backward()
-        optimizer.step()
-        loss_values.append(current_loss.item())
-    return tensor
+    """
+    Fast optimization of a PyTorch function with 10D input.
+    """
+    x = torch.rand(10, requires_grad=True)
+    opt = torch.optim.Adam([x], lr=0.031)
+    for _ in range(75):
+        opt.zero_grad()
+        loss = f(x)
+        loss.backward()
+        opt.step()
+    return x
 
 def optimize_tf_fun1(f):
-
-    variable = tf.Variable(tf.random.uniform((2,), -1, 1))  
-    learning_rate, num_iterations = 0.032, 70
-    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-    loss_values = []
-
-    for _ in range(num_iterations):
-        with tf.GradientTape() as tape:    
-            current_loss = f(variable)
-        gradients = tape.gradient(current_loss, variable)  
-        optimizer.apply_gradients([(gradients, variable)])
-        loss_values.append(current_loss.numpy())           
-    return variable
+    """
+    Fast optimization of a TensorFlow function with 2D input.
+    """
+    x = tf.Variable(tf.random.uniform((2,), -1, 1))
+    opt = tf.keras.optimizers.Adam(learning_rate=0.032)
+    for _ in range(70):
+        with tf.GradientTape() as tape:
+            loss = f(x)
+        grads = tape.gradient(loss, x)
+        opt.apply_gradients([(grads, x)])
+    return x
 
 def optimize_tf_fun2(f):
-
-    variable = tf.Variable(tf.random.uniform((10,), -1, 1))
-    learning_rate, num_iterations = 0.0302, 97
-    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-    loss_values = []
-
-    for _ in range(num_iterations):
+    """
+    Fast optimization of a TensorFlow function with 10D input.
+    """
+    x = tf.Variable(tf.random.uniform((10,), -1, 1))
+    opt = tf.keras.optimizers.Adam(learning_rate=0.0302)
+    for _ in range(97):
         with tf.GradientTape() as tape:
-            current_loss = f(variable)
-        gradients = tape.gradient(current_loss, [variable])
-        optimizer.apply_gradients(zip(gradients, [variable]))
-        loss_values.append(current_loss.numpy())
-    return variable
+            loss = f(x)
+        grads = tape.gradient(loss, [x])
+        opt.apply_gradients(zip(grads, [x]))
+    return x
+
